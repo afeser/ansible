@@ -299,7 +299,13 @@ def agefilter(st, now, age, timestamp):
 
 
 def sizefilter(st, size):
-    '''filter files greater than size'''
+    '''
+    filter files greater than size
+    negative size means check if file size is smaller
+
+    :arg st: stat object to be tested
+    :arg size: size in bytes
+    '''
     if size is None:
         return True
     elif size >= 0 and st.st_size >= abs(size):

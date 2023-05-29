@@ -6,10 +6,11 @@ import tempfile
 from ansible.module_utils import basic
 
 from units.compat import unittest
+from units.compat.mock import Mock
 from ansible.module_utils._text import to_bytes
 from ansible.module_utils.basic import AnsibleModule
 
-from ansible.modules.known_hosts import compute_diff, sanity_check
+from ansible.modules.known_hosts import compute_diff, sanity_check, search_for_host_key
 
 
 class KnownHostsDiffTestCase(unittest.TestCase):
@@ -108,3 +109,33 @@ class KnownHostsDiffTestCase(unittest.TestCase):
         key = '%s ssh-rsa ASDF foo@bar' % (host,)
         keygen = module.get_bin_path('ssh-keygen')
         sanity_check(module, host, key, keygen)
+
+    def test_search_for_host_key(self):
+        """
+        """
+        my_file = tempfile.NamedTemporaryFile(prefix='ansible-test-', suffix='-known_hosts')
+        # module = AnsibleModule(
+        #     argument_spec=dict(
+        #         name=dict(required=True, type='str', aliases=['host']),
+        #         key=dict(required=False, type='str', no_log=False),
+        #         path=dict(default="~/.ssh/known_hosts", type='path'),
+        #         hash_host=dict(required=False, type='bool', default=False),
+        #         state=dict(default='present', choices=['absent', 'present']),
+        #     ),
+        #     supports_check_mode=True
+        # )
+        
+        # params = module.params
+        params = {}
+        params['name'] = 'host1.example.com'
+        params['host'] = 'host1.example.com'
+        params['key'] = 'host1.example.com,10.9.8.77 ssh-rsa ASDeararAIUHI324324'
+        params['path'] = my_file.name
+        params['state'] = 'present'
+        
+
+        search_for_host_key(Mock(), params['host'], params['key'], params['path'], sshkeygen = Mock().get_bin_path("ssh-keygen", True))
+
+
+
+
